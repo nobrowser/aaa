@@ -9,7 +9,7 @@ AAA_SUBMODULES != echo Aaa__*.ml
 AAA_INTERFACES = $(AAA_SUBMODULES:.ml=.mli)
 
 # need this monster for link ordering
-AAA_BYTEOBJS != ./linkorder.sh Aaa $(AAA_SUBMODULES) $(AAA_INTERFACES)
+AAA_BYTEOBJS != ./linkorder.sh byte Aaa $(AAA_SUBMODULES) $(AAA_INTERFACES)
 
 Aaa.cma: $(AAA_BYTEOBJS) Aaa.cmo
 		ocamlc -o Aaa.cma $(OCAMLFLAGS) $(AAA_BYTEOBJS) Aaa.cmo
