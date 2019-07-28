@@ -1,4 +1,6 @@
 SHELL = /bin/sh
+PATH != eval "`opam env`" ; echo "$${PATH}"
+export PATH
 
 OCAMLFLAGS = -no-alias-deps -w -49   # add other options for ocamlc here
 
