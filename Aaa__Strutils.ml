@@ -47,7 +47,7 @@ let field_bounds ?max ~f:f s =
               if f s.[i - 1] then bounds ((i, i) :: ac) Out (i - 1)
               else bounds ac In (i - 1)
          ) in
-    bounds [] Out l |> trim_bounds max l
+    bounds [(l, l)] In l |> trim_bounds max l
 
 let fields ?max ~f s = field_bounds ?max ~f s |> substrings_of_bounds s
 
