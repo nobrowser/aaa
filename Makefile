@@ -51,7 +51,7 @@ Aaa.cmi:
 include .depend
 
 # Test suite
-RunTests: Aaa.cma Runtests.ml
+RunTests: Aaa.cma RunTests.ml
 		ocamlfind ocamlc -package qcheck-core -package qcheck-core.runner -o RunTests -linkpkg Aaa.cma RunTests.ml
 
 .PHONY: clean test
