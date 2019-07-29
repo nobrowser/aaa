@@ -18,10 +18,10 @@ byte: Aaa.cma
 native: Aaa.cmxa
 
 Aaa.cma: $(AAA_BYTEOBJS) Aaa.cmo
-		ocamlc -o Aaa.cma $(OCAMLFLAGS) $(AAA_BYTEOBJS) Aaa.cmo
+		ocamlc -a -o Aaa.cma $(OCAMLFLAGS) $(AAA_BYTEOBJS) Aaa.cmo
 
 Aaa.cmxa: $(AAA_NATIVEOBJS) Aaa.cmx
-		ocamlopt -o Aaa.cmxa $(OCAMLFLAGS) $(AAA_NATIVEOBJS) Aaa.cmx
+		ocamlopt -a -o Aaa.cmxa $(OCAMLFLAGS) $(AAA_NATIVEOBJS) Aaa.cmx
 
 # Common rules
 .SUFFIXES: .ml .mli .cmo .cmi .cmx
