@@ -126,8 +126,8 @@ let t_tok_all_strictly_increasing =
       strictly_increasing l bs
     )
 
-let t_tok_all_delimits =
-    tok_all_test ~name:"tok_all_delimits"
+let t_tok_all_transitions =
+    tok_all_test ~name:"tok_all_transitions"
     ( fun s ->
       let l = String.length s in
       let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
@@ -202,22 +202,46 @@ let t_fld_all_nonempty =
       let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
       match bs with [] -> false | _ -> true
     )
-(*
-let rec last_aligned l = function
-  | [] -> false
-  | [(_, j)] -> j = l
-  | _ ::
 
-let t_fld_all_aligned =
-    tok_all_test ~name:"fld_all_aligned"
+let t_fld_all_rear_aligned =
+    tok_all_test ~name:"fld_all_rear_aligned"
     ( fun s ->
       let l = String.length s in
       let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
-      match bs with
-      | [] -> false
-      | [(i, j)] ->
+      List.exists (fun (_, j) -> j = l) bs
     )
- *)
+
+let t_fld_all_front_aligned =
+    tok_all_test ~name:"fld_all_front_aligned"
+    ( fun s ->
+      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      List.exists (fun (i, _) -> i = 0) bs
+    )
+
+let t_fld_all_transitions =
+    tok_all_test ~name:"fld_all_transitions"
+    ( fun s ->
+        let l = String.length s in
+        let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+        List.for_all
+        ( fun (i, j) ->
+          (i = 0 || wsp s.[i - 1]) &&
+          (j = l || wsp s.[j]) &&
+          (i = j || (nwsp s.[i] && nwsp s.[j - 1]))
+        )  bs
+      )
+
+let t_fld_all_nomissed =
+    tok_all_test ~name:"fld_all_nomissed"
+    ( fun s ->
+      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      List.for_all
+      ( fun (i, j) ->
+        (i = j) ||
+        let ss = String.sub s i (j - i) in
+        string_forall nwsp ss
+      ) bs
+    )
 
 let suite =
   [ t_take_length
@@ -230,7 +254,7 @@ let suite =
   ; t_tok_all_no_rest
   ; t_tok_all_within_length
   ; t_tok_all_strictly_increasing
-  ; t_tok_all_delimits
+  ; t_tok_all_transitions
   ; t_tok_all_nomissed
   ; t_tok_all_nonempty
   ; t_tok_all_empty
@@ -238,6 +262,10 @@ let suite =
   ; t_fld_all_within_length
   ; t_fld_all_loosely_increasing
   ; t_fld_all_nonempty
+  ; t_fld_all_rear_aligned
+  ; t_fld_all_front_aligned
+  ; t_fld_all_transitions
+  ; t_fld_all_nomissed
   ]
 
 let _ = R.run_tests_main suite

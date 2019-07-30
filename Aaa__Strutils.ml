@@ -17,6 +17,10 @@ let trim_bounds maxopt l bs =
        (head, Some (i, l))
     | _ -> invalid_arg "Strutils.trim_bounds"
 
+let replace_front k = function
+    | [] -> assert false
+    | (_, j) :: rest -> (k, j) :: rest
+
 let token_bounds ?max ~f:f s =
     let l = String.length s in
     let rec bounds ac st = function
@@ -25,9 +29,7 @@ let token_bounds ?max ~f:f s =
          if f s.[i - 1] then bounds ac Out (i - 1) else
          ( match st with
            | Out -> bounds ((i - 1, i) :: ac) In (i - 1)
-           | In ->
-              let (_, j), js = List.(hd ac, tl ac) in
-              bounds ((i - 1, j) :: js) In (i - 1)
+           | In -> bounds (replace_front (i - 1) ac) In (i - 1)
          ) in
     bounds [] Out l |> trim_bounds max l
 
@@ -36,16 +38,19 @@ let tokens ?max ~f s = token_bounds ?max ~f s |> substrings_of_bounds s
 let field_bounds ?max ~f:f s =
     let l = String.length s in
     let rec bounds ac st = function
-      | 0 -> (match st with In -> ac | Out -> ((0, 0) :: ac))
+      | 0 ->
+         ( match st with
+           | In -> replace_front 0 ac
+           | Out -> ((0, 0) :: ac)
+         )
       | i ->
          ( match st with
            | In ->
               if f s.[i - 1] then bounds ac Out (i - 1)
-              else let (_, j), js = List.(hd ac, tl ac) in
-                   bounds ((i - 1, j) :: js) In (i - 1)
+              else bounds (replace_front (i - 1) ac) In (i - 1)
            | Out ->
               if f s.[i - 1] then bounds ((i, i) :: ac) Out (i - 1)
-              else bounds ac In (i - 1)
+              else bounds ((i - 1, i) :: ac) In (i - 1)
          ) in
     bounds [(l, l)] In l |> trim_bounds max l
 
