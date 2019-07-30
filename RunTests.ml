@@ -243,6 +243,95 @@ let t_fld_all_nomissed =
       ) bs
     )
 
+let t_fld_all_notokens =
+    tok_all_test ~name:"fld_all_notokens"
+    ( fun s ->
+      let l = String.length s in
+      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      Q.assume (string_forall wsp s) ;
+      List.(for_all (fun i -> let (j, k) = nth bs i in j = i && k = i) (upto l))
+    )
+
+let tok_max_print = P.(pair int string)
+
+let tok_max_arb = G.(pair small_nat strgen) |> Q.make ~print:tok_max_print
+
+let tok_max_test ~name = T.make ~name ~long_factor:10 tok_max_arb
+
+let t_tok_max_short =
+    tok_max_test ~name:"tok_max_short"
+    ( fun (n, s) ->
+      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let l = List.length bs in
+      l <= n
+    )
+
+let t_tok_max_norest =
+    tok_max_test ~name:"tok_max_norest"
+    ( fun (n, s) ->
+      let bs, rest = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let l = List.length bs in
+      match rest with
+      | None -> Q.assume_fail ()
+      | _ -> l = n
+    )
+
+let t_tok_max_rear_aligned =
+    tok_max_test ~name:"tok_max_rear_aligned"
+    ( fun (n, s) ->
+      let _, rest = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let l = String.length s in
+      match rest with
+      | None -> Q.assume_fail ()
+      | Some (_, k) -> k = l
+    )
+
+let t_tok_max_rest_rightmost =
+    tok_max_test ~name:"tok_max_rest_rightmost"
+    ( fun (n, s) ->
+      let bs, rest = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      match rest with
+      | None -> Q.assume_fail ()
+      | Some (k, _) -> List.for_all (fun (_, j) -> j < k) bs
+    )
+
+let t_fld_max_short =
+    tok_max_test ~name:"fld_max_short"
+    ( fun (n, s) ->
+      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let l = List.length bs in
+      l <= n
+    )
+
+let t_fld_max_norest =
+    tok_max_test ~name:"fld_max_norest"
+    ( fun (n, s) ->
+      let bs, rest = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let l = List.length bs in
+      match rest with
+      | None -> Q.assume_fail ()
+      | _ -> l = n
+    )
+
+let t_fld_max_rear_aligned =
+    tok_max_test ~name:"fld_max_rear_aligned"
+    ( fun (n, s) ->
+      let _, rest = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let l = String.length s in
+      match rest with
+      | None -> Q.assume_fail ()
+      | Some (_, k) -> k = l
+    )
+
+let t_fld_max_rest_rightmost =
+    tok_max_test ~name:"fld_max_rest_rightmost"
+    ( fun (n, s) ->
+      let bs, rest = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      match rest with
+      | None -> Q.assume_fail ()
+      | Some (k, _) -> List.for_all (fun (_, j) -> j <= k) bs
+    )
+
 let suite =
   [ t_take_length
   ; t_take_invalid
@@ -266,6 +355,15 @@ let suite =
   ; t_fld_all_front_aligned
   ; t_fld_all_transitions
   ; t_fld_all_nomissed
+  ; t_fld_all_notokens
+  ; t_tok_max_short
+  ; t_tok_max_norest
+  ; t_tok_max_rear_aligned
+  ; t_tok_max_rest_rightmost
+  ; t_fld_max_short
+  ; t_fld_max_norest
+  ; t_fld_max_rear_aligned
+  ; t_fld_max_rest_rightmost
   ]
 
 let _ = R.run_tests_main suite
