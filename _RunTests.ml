@@ -18,7 +18,7 @@ let t_take_invalid =
     takedrop_test ~name:"take_invalid"
     ( fun (n, s) ->
       Q.assume (n > List.length s) ;
-      try Aaa__Listutils.take n s |> ignore ; false with
+      try Listutils.take n s |> ignore ; false with
       | Invalid_argument _ -> true
     )
 
@@ -26,7 +26,7 @@ let t_take_length =
     takedrop_test ~name:"take_length"
     ( fun (n, s) ->
       Q.assume (n <= List.length s) ;
-      let lt = Aaa__Listutils.take n s |> List.length in
+      let lt = Listutils.take n s |> List.length in
       lt = n
     )
 
@@ -34,7 +34,7 @@ let t_take_sublist =
     takedrop_test ~name:"take_sublist"
     ( fun (n, s) ->
       Q.assume (n <= List.length s) ;
-      let taken = Aaa__Listutils.take n s in
+      let taken = Listutils.take n s in
       let lt = List.length taken in
       List.(for_all (fun i -> nth s i = nth taken i) (upto lt))
     )
@@ -43,7 +43,7 @@ let t_drop_invalid =
     takedrop_test ~name:"drop_invalid"
     ( fun (n, s) ->
       Q.assume (n > List.length s) ;
-      try Aaa__Listutils.drop n s |> ignore ; false with
+      try Listutils.drop n s |> ignore ; false with
       | Invalid_argument _ -> true
     )
 
@@ -52,7 +52,7 @@ let t_drop_length =
     ( fun (n, s) ->
       let l = List.length s in
       Q.assume (n <= l) ;
-      let ld = Aaa__Listutils.drop n s |> List.length in
+      let ld = Listutils.drop n s |> List.length in
       ld = l - n
     )
 
@@ -61,7 +61,7 @@ let t_drop_sublist =
     ( fun (n, s) ->
       let l = List.length s in
       Q.assume (n <= l) ;
-      let dropped = Aaa__Listutils.drop n s in
+      let dropped = Listutils.drop n s in
       List.(for_all (fun i -> i < n || nth s i = nth dropped (i - n)) (upto l))
     )
 
@@ -70,7 +70,7 @@ let t_take_drop_append =
     ( fun (n, s) ->
       let l = List.length s in
       Q.assume (n <= l) ;
-      let remade = Aaa__Listutils.(take n s @ drop n s) in
+      let remade = Listutils.(take n s @ drop n s) in
       List.(for_all (fun i -> nth s i = nth remade i) (upto l))
     )
 
@@ -95,7 +95,7 @@ let string_forall ~f:f s =
 let t_tok_all_no_rest =
     tok_all_test ~name:"tok_all_no_rest"
     ( fun s ->
-      let _ , restopt = Aaa__Strutils.token_bounds ~f:wsp s in
+      let _ , restopt = Strutils.token_bounds ~f:wsp s in
       match restopt with None -> true | _ -> false
     )
 
@@ -108,7 +108,7 @@ let t_tok_all_within_length =
     tok_all_test ~name:"tok_all_within_length"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
+      let bs, _ = Strutils.token_bounds ~f:wsp s in
       all_within_length l bs
     )
 
@@ -122,7 +122,7 @@ let t_tok_all_strictly_increasing =
     tok_all_test ~name:"tok_all_strictly_increasing"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
+      let bs, _ = Strutils.token_bounds ~f:wsp s in
       strictly_increasing l bs
     )
 
@@ -130,7 +130,7 @@ let t_tok_all_transitions =
     tok_all_test ~name:"tok_all_transitions"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
+      let bs, _ = Strutils.token_bounds ~f:wsp s in
       List.for_all
       ( fun (i, j) ->
         ((i = 0 || wsp s.[i - 1]) &&
@@ -143,7 +143,7 @@ let t_tok_all_transitions =
 let t_tok_all_nomissed =
     tok_all_test ~name:"tok_all_nomissed"
     ( fun s ->
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
+      let bs, _ = Strutils.token_bounds ~f:wsp s in
       List.for_all
       ( fun (i, j) ->
         let ss = String.sub s i (j - i) in
@@ -154,7 +154,7 @@ let t_tok_all_nomissed =
 let t_tok_all_nonempty =
     tok_all_test ~name:"tok_all_nonempty"
     ( fun s ->
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
+      let bs, _ = Strutils.token_bounds ~f:wsp s in
       not (string_forall wsp s) ==>
       match bs with [] -> false | _ -> true
     )
@@ -162,7 +162,7 @@ let t_tok_all_nonempty =
 let t_tok_all_empty =
     tok_all_test ~name:"tok_all_empty"
     ( fun s ->
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp s in
+      let bs, _ = Strutils.token_bounds ~f:wsp s in
       Q.assume (string_forall wsp s) ;
       match bs with [] -> true | _ -> false
     )
@@ -170,7 +170,7 @@ let t_tok_all_empty =
 let t_fld_all_no_rest =
     tok_all_test ~name:"fld_all_no_rest"
     ( fun s ->
-      let _ , restopt = Aaa__Strutils.field_bounds ~f:wsp s in
+      let _ , restopt = Strutils.field_bounds ~f:wsp s in
       match restopt with None -> true | _ -> false
     )
 
@@ -178,7 +178,7 @@ let t_fld_all_within_length =
     tok_all_test ~name:"fld_all_within_length"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       all_within_length l bs
     )
 
@@ -192,14 +192,14 @@ let t_fld_all_loosely_increasing =
     tok_all_test ~name:"fld_all_loosely_increasing"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       loosely_increasing l bs
     )
 
 let t_fld_all_nonempty =
     tok_all_test ~name:"fld_all_nonempty"
     ( fun s ->
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       match bs with [] -> false | _ -> true
     )
 
@@ -207,14 +207,14 @@ let t_fld_all_rear_aligned =
     tok_all_test ~name:"fld_all_rear_aligned"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       List.exists (fun (_, j) -> j = l) bs
     )
 
 let t_fld_all_front_aligned =
     tok_all_test ~name:"fld_all_front_aligned"
     ( fun s ->
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       List.exists (fun (i, _) -> i = 0) bs
     )
 
@@ -222,7 +222,7 @@ let t_fld_all_transitions =
     tok_all_test ~name:"fld_all_transitions"
     ( fun s ->
         let l = String.length s in
-        let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+        let bs, _ = Strutils.field_bounds ~f:wsp s in
         List.for_all
         ( fun (i, j) ->
           (i = 0 || wsp s.[i - 1]) &&
@@ -234,7 +234,7 @@ let t_fld_all_transitions =
 let t_fld_all_nomissed =
     tok_all_test ~name:"fld_all_nomissed"
     ( fun s ->
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       List.for_all
       ( fun (i, j) ->
         (i = j) ||
@@ -247,7 +247,7 @@ let t_fld_all_notokens =
     tok_all_test ~name:"fld_all_notokens"
     ( fun s ->
       let l = String.length s in
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp s in
+      let bs, _ = Strutils.field_bounds ~f:wsp s in
       Q.assume (string_forall wsp s) ;
       List.(for_all (fun i -> let (j, k) = nth bs i in j = i && k = i) (upto l))
     )
@@ -261,7 +261,7 @@ let tok_max_test ~name = T.make ~name ~long_factor:10 tok_max_arb
 let t_tok_max_short =
     tok_max_test ~name:"tok_max_short"
     ( fun (n, s) ->
-      let bs, _ = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let bs, _ = Strutils.token_bounds ~f:wsp ~max:n s in
       let l = List.length bs in
       l <= n
     )
@@ -269,7 +269,7 @@ let t_tok_max_short =
 let t_tok_max_norest =
     tok_max_test ~name:"tok_max_norest"
     ( fun (n, s) ->
-      let bs, rest = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let bs, rest = Strutils.token_bounds ~f:wsp ~max:n s in
       let l = List.length bs in
       match rest with
       | None -> Q.assume_fail ()
@@ -279,7 +279,7 @@ let t_tok_max_norest =
 let t_tok_max_rear_aligned =
     tok_max_test ~name:"tok_max_rear_aligned"
     ( fun (n, s) ->
-      let _, rest = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let _, rest = Strutils.token_bounds ~f:wsp ~max:n s in
       let l = String.length s in
       match rest with
       | None -> Q.assume_fail ()
@@ -289,7 +289,7 @@ let t_tok_max_rear_aligned =
 let t_tok_max_rest_rightmost =
     tok_max_test ~name:"tok_max_rest_rightmost"
     ( fun (n, s) ->
-      let bs, rest = Aaa__Strutils.token_bounds ~f:wsp ~max:n s in
+      let bs, rest = Strutils.token_bounds ~f:wsp ~max:n s in
       match rest with
       | None -> Q.assume_fail ()
       | Some (k, _) -> List.for_all (fun (_, j) -> j < k) bs
@@ -298,7 +298,7 @@ let t_tok_max_rest_rightmost =
 let t_fld_max_short =
     tok_max_test ~name:"fld_max_short"
     ( fun (n, s) ->
-      let bs, _ = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let bs, _ = Strutils.field_bounds ~f:wsp ~max:n s in
       let l = List.length bs in
       l <= n
     )
@@ -306,7 +306,7 @@ let t_fld_max_short =
 let t_fld_max_norest =
     tok_max_test ~name:"fld_max_norest"
     ( fun (n, s) ->
-      let bs, rest = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let bs, rest = Strutils.field_bounds ~f:wsp ~max:n s in
       let l = List.length bs in
       match rest with
       | None -> Q.assume_fail ()
@@ -316,7 +316,7 @@ let t_fld_max_norest =
 let t_fld_max_rear_aligned =
     tok_max_test ~name:"fld_max_rear_aligned"
     ( fun (n, s) ->
-      let _, rest = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let _, rest = Strutils.field_bounds ~f:wsp ~max:n s in
       let l = String.length s in
       match rest with
       | None -> Q.assume_fail ()
@@ -326,7 +326,7 @@ let t_fld_max_rear_aligned =
 let t_fld_max_rest_rightmost =
     tok_max_test ~name:"fld_max_rest_rightmost"
     ( fun (n, s) ->
-      let bs, rest = Aaa__Strutils.field_bounds ~f:wsp ~max:n s in
+      let bs, rest = Strutils.field_bounds ~f:wsp ~max:n s in
       match rest with
       | None -> Q.assume_fail ()
       | Some (k, _) -> List.for_all (fun (_, j) -> j <= k) bs

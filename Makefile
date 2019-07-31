@@ -49,7 +49,7 @@ include .depend
 
 # Test suite
 _RunTests: $(AAA_BYTEOBJS) _RunTests.ml
-		ocamlfind ocamlc -package qcheck-core -package qcheck-core.runner -o _RunTests -linkpkg $(AAA_BYTEOBJS) RunTests.ml
+		ocamlfind ocamlc -package qcheck-core -package qcheck-core.runner -w -24 -o _RunTests -linkpkg $(AAA_BYTEOBJS) _RunTests.ml
 
 .PHONY: clean test
 
