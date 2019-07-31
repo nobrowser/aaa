@@ -1,3 +1,3 @@
 #! /bin/sh -e
 
-ocamlfind install META Aaa.cma Aaa.cmxa *.mli *.cmi
+ocamlfind install aaa META Aaa.cma Aaa.cmxa *.mli *.cmi
