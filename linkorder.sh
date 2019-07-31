@@ -1,17 +1,16 @@
 #! /bin/sh -e
 
 BYTE_OR_NATIVE="$1" ; shift
-LIBNAME="$1" ; shift
 
 case "${BYTE_OR_NATIVE}" in
     ([Bb]*)
-        ocamldep -sort -map "${LIBNAME}.mli" -open "${LIBNAME}" "$@" |
+        ocamldep -sort "$@" |
             tr ' ' '\n' |
             grep 'ml$' |
             sed -e 's,ml$,cmo,'
         ;;
     ([Nn]*)
-        ocamldep -sort -map "${LIBNAME}.mli" -open "${LIBNAME}" "$@" |
+        ocamldep -sort "$@" |
             tr ' ' '\n' |
             grep 'ml$' |
             sed -e 's,ml$,cmx,'

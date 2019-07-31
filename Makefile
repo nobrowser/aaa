@@ -2,14 +2,14 @@ SHELL = /bin/sh
 PATH != eval "`opam env`" ; echo "$${PATH}"
 export PATH
 
-OCAMLFLAGS = -no-alias-deps -w -49   # add other options for ocamlc here
+OCAMLFLAGS = -for-pack Aaa -principal   # add other options for ocamlc here
 
 # The list of object files for AAA
-AAA_SUBMODULES != echo Aaa__*.ml
+AAA_SUBMODULES != echo [A-Z]*.ml
 AAA_INTERFACES = $(AAA_SUBMODULES:.ml=.mli)
 
-AAA_NATIVEOBJS != ./linkorder.sh native Aaa $(AAA_SUBMODULES) $(AAA_INTERFACES)
-AAA_BYTEOBJS != ./linkorder.sh byte Aaa $(AAA_SUBMODULES) $(AAA_INTERFACES)
+AAA_NATIVEOBJS != ./linkorder.sh native $(AAA_SUBMODULES) $(AAA_INTERFACES)
+AAA_BYTEOBJS != ./linkorder.sh byte $(AAA_SUBMODULES) $(AAA_INTERFACES)
 
 .PHONY: byte native
 
@@ -17,47 +17,44 @@ byte: Aaa.cma
 
 native: Aaa.cmxa
 
-Aaa.cma: $(AAA_BYTEOBJS) Aaa.cmo
-		ocamlc -a -o Aaa.cma $(OCAMLFLAGS) $(AAA_BYTEOBJS) Aaa.cmo
+Aaa.cma: Aaa.cmo
+		ocamlc -a -o Aaa.cma Aaa.cmo
 
-Aaa.cmxa: $(AAA_NATIVEOBJS) Aaa.cmx
-		ocamlopt -a -o Aaa.cmxa $(OCAMLFLAGS) $(AAA_NATIVEOBJS) Aaa.cmx
+Aaa.cmxa: Aaa.cmx
+		ocamlopt -a -o Aaa.cmxa Aaa.cmx
+
+Aaa.cmo: $(AAA_BYTEOBJS)
+		ocamlc -pack -o Aaa.cmo $(AAA_BYTEOBJS)
+
+Aaa.cmx: $(AAA_NATIVEOBJS)
+		ocamlopt -pack -o Aaa.cmx $(AAA_NATIVEOBJS)
 
 # Common rules
 .SUFFIXES: .ml .mli .cmo .cmi .cmx
 
 .ml.cmo:
-		ocamlc $(OCAMLFLAGS) -open Aaa -c $<
+		ocamlc $(OCAMLFLAGS) -c -o $@ $<
 
 .ml.cmx:
-		ocamlopt $(OCAMLFLAGS) -open Aaa -c $<
-
-Aaa.cmo: Aaa.ml Aaa.cmi
-		ocamlc $(OCAMLFLAGS) -c Aaa.ml
-
-Aaa.cmx: Aaa.ml Aaa.cmi
-		ocamlopt $(OCAMLFLAGS) -c Aaa.ml
+		ocamlopt $(OCAMLFLAGS) -c -o $@ $<
 
 .mli.cmi:
-		ocamlc $(OCAMLFLAGS) -open Aaa -c $<
-
-Aaa.cmi:
-		ocamlc $(OCAMLFLAGS) -c Aaa.mli
+		ocamlc $(OCAMLFLAGS) -c -o $@ $<
 
 # Dependencies
-.depend: Makefile $(AAA_INTERFACES) $(AAA_SUBMODULES) Aaa.mli
-		ocamldep -map Aaa.mli -open Aaa $(AAA_INTERFACES) $(AAA_SUBMODULES) > .depend
+.depend: Makefile $(AAA_INTERFACES) $(AAA_SUBMODULES)
+		ocamldep $(AAA_INTERFACES) $(AAA_SUBMODULES) > .depend
 
 include .depend
 
 # Test suite
-RunTests: Aaa.cma RunTests.ml
-		ocamlfind ocamlc -package qcheck-core -package qcheck-core.runner -o RunTests -linkpkg Aaa.cma RunTests.ml
+_RunTests: $(AAA_BYTEOBJS) _RunTests.ml
+		ocamlfind ocamlc -package qcheck-core -package qcheck-core.runner -o _RunTests -linkpkg $(AAA_BYTEOBJS) RunTests.ml
 
 .PHONY: clean test
 
-test: RunTests
-		./RunTests
+test: _RunTests
+		./_RunTests
 
 clean:
-		rm -f *.cma *.cmxa *.cmo *.o *.cmx *.cmi .depend RunTests
+		rm -f *.cma *.cmxa *.cmo *.o *.cmx *.cmi .depend _RunTests
