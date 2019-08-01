@@ -5,27 +5,43 @@ module P = QCheck.Print
 module R = QCheck_base_runner
 
 let ( ==> ) = Q.( ==> )
+let ( >>= ) = G.( >>= )
 
 let takedrop_print = P.(pair int (list int))
 
-let takedrop_arb = G.(pair small_nat (small_list small_nat)) |> Q.make ~print:takedrop_print
+let takedrop_arb_invalid =
+  let gn = G.small_nat in
+  gn >>= (fun n -> G.(pair (return (n+1)) (list_repeat n nat))) |>
+  Q.make ~print:takedrop_print
+
+let takedrop_test_invalid ~name = T.make ~name ~long_factor:10 takedrop_arb_invalid
+
+let t_take_invalid =
+    takedrop_test_invalid ~name:"take_invalid"
+    ( fun (n, s) ->
+      try Listutils.take n s |> ignore ; false with
+      | Invalid_argument _ -> true
+    )
+
+let t_drop_invalid =
+    takedrop_test_invalid ~name:"drop_invalid"
+    ( fun (n, s) ->
+      try Listutils.drop n s |> ignore ; false with
+      | Invalid_argument _ -> true
+    )
+
+let takedrop_arb =
+  let gs = G.(small_list nat) in
+  gs >>= (fun s -> G.(pair (List.length s |> int_bound) (return s))) |>
+  Q.make ~print:takedrop_print
 
 let takedrop_test ~name = T.make ~name ~long_factor:10 takedrop_arb
 
 let upto n = List.init n (fun i -> i)
 
-let t_take_invalid =
-    takedrop_test ~name:"take_invalid"
-    ( fun (n, s) ->
-      Q.assume (n > List.length s) ;
-      try Listutils.take n s |> ignore ; false with
-      | Invalid_argument _ -> true
-    )
-
 let t_take_length =
     takedrop_test ~name:"take_length"
     ( fun (n, s) ->
-      Q.assume (n <= List.length s) ;
       let lt = Listutils.take n s |> List.length in
       lt = n
     )
@@ -33,25 +49,15 @@ let t_take_length =
 let t_take_sublist =
     takedrop_test ~name:"take_sublist"
     ( fun (n, s) ->
-      Q.assume (n <= List.length s) ;
       let taken = Listutils.take n s in
       let lt = List.length taken in
       List.(for_all (fun i -> nth s i = nth taken i) (upto lt))
-    )
-
-let t_drop_invalid =
-    takedrop_test ~name:"drop_invalid"
-    ( fun (n, s) ->
-      Q.assume (n > List.length s) ;
-      try Listutils.drop n s |> ignore ; false with
-      | Invalid_argument _ -> true
     )
 
 let t_drop_length =
     takedrop_test ~name:"drop_length"
     ( fun (n, s) ->
       let l = List.length s in
-      Q.assume (n <= l) ;
       let ld = Listutils.drop n s |> List.length in
       ld = l - n
     )
@@ -60,7 +66,6 @@ let t_drop_sublist =
     takedrop_test ~name:"drop_sublist"
     ( fun (n, s) ->
       let l = List.length s in
-      Q.assume (n <= l) ;
       let dropped = Listutils.drop n s in
       List.(for_all (fun i -> i < n || nth s i = nth dropped (i - n)) (upto l))
     )
@@ -69,24 +74,48 @@ let t_take_drop_append =
     takedrop_test ~name:"take_drop_append"
     ( fun (n, s) ->
       let l = List.length s in
-      Q.assume (n <= l) ;
       let remade = Listutils.(take n s @ drop n s) in
       List.(for_all (fun i -> nth s i = nth remade i) (upto l))
     )
 
-let strgen =
-  G.(string
-     ~gen:(frequency
-           [(1, oneofl [' '; '\t']);
-            (7, printable)]))
+let charlist = List.map Char.chr (upto 255)
 
-let tok_all_arb = strgen |> Q.make ~print:P.string
+let chargen p = List.filter p charlist |> G.oneofl
 
-let tok_all_test ~name = T.make ~name ~long_factor:10 tok_all_arb
+let charpr c = Printf.sprintf "\\%.2x" (Char.code c)
 
 let wsp = function ' ' | '\t' -> true | _ -> false
 
 let nwsp = fun c -> not (wsp c)
+
+let strpr s =
+  String.to_seq s |>
+  List.of_seq |>
+  List.map charpr |>
+  String.concat "" |>
+  Printf.sprintf "\"%s\""
+
+let strgen_normal =
+  G.(string
+     ~gen:(frequency
+           [(1, chargen wsp);
+            (7, chargen nwsp)]))
+
+let strgen_allwsp = G.string ~gen:(chargen wsp)
+
+let strgen_allnwsp = G.string ~gen:(chargen nwsp)
+
+let tok_all_arb = strgen_normal |> Q.make ~print:strpr
+
+let tok_all_test ~name = T.make ~name ~long_factor:10 tok_all_arb
+
+let tok_all_wsp_arb = strgen_allwsp |> Q.make ~print:strpr
+
+let tok_all_wsp_test ~name = T.make ~name ~long_factor:10 tok_all_wsp_arb
+
+let tok_all_nwsp_arb = strgen_allnwsp |> Q.make ~print:strpr
+
+let tok_all_nwsp_test ~name = T.make ~name ~long_factor:10 tok_all_nwsp_arb
 
 let string_forall ~f:f s =
   let s' = String.map (fun c -> if f c then '+' else '-') s in
@@ -152,18 +181,16 @@ let t_tok_all_nomissed =
     )
 
 let t_tok_all_nonempty =
-    tok_all_test ~name:"tok_all_nonempty"
+    tok_all_nwsp_test ~name:"tok_all_nonempty"
     ( fun s ->
       let bs, _ = Strutils.token_bounds ~f:wsp s in
-      not (string_forall wsp s) ==>
       match bs with [] -> false | _ -> true
     )
 
 let t_tok_all_empty =
-    tok_all_test ~name:"tok_all_empty"
+    tok_all_wsp_test ~name:"tok_all_empty"
     ( fun s ->
       let bs, _ = Strutils.token_bounds ~f:wsp s in
-      Q.assume (string_forall wsp s) ;
       match bs with [] -> true | _ -> false
     )
 
@@ -254,7 +281,7 @@ let t_fld_all_notokens =
 
 let tok_max_print = P.(pair int string)
 
-let tok_max_arb = G.(pair small_nat strgen) |> Q.make ~print:tok_max_print
+let tok_max_arb = G.(pair small_nat strgen_normal) |> Q.make ~print:tok_max_print
 
 let tok_max_test ~name = T.make ~name ~long_factor:10 tok_max_arb
 
