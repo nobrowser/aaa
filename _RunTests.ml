@@ -359,6 +359,17 @@ let t_fld_max_rest_rightmost =
       | Some (k, _) -> List.for_all (fun (_, j) -> j <= k) bs
     )
 
+let hashed_arb = strgen_normal |> Q.make ~print:strpr
+
+let hashed_test ~name = T.make ~name ~long_factor:10 hashed_arb
+
+let t_hashed_copy =
+    hashed_test ~name:"hashed_copy"
+    ( fun s ->
+      let s' = String.(sub s 0 (length s)) in
+      HashedString.(hash s = hash s')
+    )
+
 let suite =
   [ t_take_length
   ; t_take_invalid
@@ -391,6 +402,7 @@ let suite =
   ; t_fld_max_norest
   ; t_fld_max_rear_aligned
   ; t_fld_max_rest_rightmost
+  ; t_hashed_copy
   ]
 
 let _ = R.run_tests_main suite
