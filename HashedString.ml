@@ -1,6 +1,6 @@
 include String
 
 let hash s =
-  let sum24 a c = (Char.code c + (a lsr 1) lor ((a land 1) lsl 23)) land 0xffffff in
-  let fold_left' = Seq.fold_left sum24 0 in
-  s |> to_seq |> fold_left'
+  let d = Digest.(string s |> to_hex) in
+  let l = if Sys.int_size <= 32 then 7 else 15 in
+  int_of_string ("0x" ^ String.sub d 13 l)
