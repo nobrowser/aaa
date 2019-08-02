@@ -11,7 +11,7 @@ let takedrop_print = P.(pair int (list int))
 
 let takedrop_arb_invalid =
   let gn = G.small_nat in
-  gn >>= (fun n -> G.(pair (return (n+1)) (list_repeat n nat))) |>
+  gn >>= (fun n -> G.(pair ((n+1) -- max_int) (list_repeat n nat))) |>
   Q.make ~print:takedrop_print
 
 let takedrop_test_invalid ~name = T.make ~name ~long_factor:10 takedrop_arb_invalid
