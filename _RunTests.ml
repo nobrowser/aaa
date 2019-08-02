@@ -370,6 +370,27 @@ let t_hashed_copy =
       HashedString.(hash s = hash s')
     )
 
+let rot13 c =
+    let o = Char.code c in
+    (o + 13) mod 256 |> Char.chr
+
+let t_hashed_splits_close =
+    hashed_test ~name:"hashed_splits_close"
+    ( fun s ->
+      let f i =
+        String.mapi (fun j c -> if i = j then rot13 c else c) s in
+      let buddies = s :: List.map f (upto (String.length s)) in
+      let hashes = List.map HashedString.hash buddies in
+      let tbl = Hashtbl.create 300 in
+      try
+      ( for i = 0 to (List.length hashes - 1) do
+        let h =  List.nth hashes i in
+        if Hashtbl.mem tbl h then raise Exit
+        else Hashtbl.add tbl h ()
+        done ; true
+      ) with Exit -> false
+    )
+
 let suite =
   [ t_take_length
   ; t_take_invalid
@@ -403,6 +424,7 @@ let suite =
   ; t_fld_max_rear_aligned
   ; t_fld_max_rest_rightmost
   ; t_hashed_copy
+  ; t_hashed_splits_close
   ]
 
 let _ = R.run_tests_main suite
