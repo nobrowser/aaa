@@ -96,7 +96,7 @@ let strpr s =
   Printf.sprintf "\"%s\""
 
 let strgen_normal =
-  G.(string
+  G.(small_string
      ~gen:(frequency
            [(1, chargen wsp);
             (7, chargen nwsp)]))
