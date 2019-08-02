@@ -299,7 +299,7 @@ let t_tok_max_norest =
       let bs, rest = Strutils.token_bounds ~f:wsp ~max:n s in
       let l = List.length bs in
       match rest with
-      | None -> Q.assume_fail ()
+      | None -> true
       | _ -> l = n
     )
 
@@ -309,7 +309,7 @@ let t_tok_max_rear_aligned =
       let _, rest = Strutils.token_bounds ~f:wsp ~max:n s in
       let l = String.length s in
       match rest with
-      | None -> Q.assume_fail ()
+      | None -> true
       | Some (_, k) -> k = l
     )
 
@@ -318,7 +318,7 @@ let t_tok_max_rest_rightmost =
     ( fun (n, s) ->
       let bs, rest = Strutils.token_bounds ~f:wsp ~max:n s in
       match rest with
-      | None -> Q.assume_fail ()
+      | None -> true
       | Some (k, _) -> List.for_all (fun (_, j) -> j < k) bs
     )
 
@@ -336,7 +336,7 @@ let t_fld_max_norest =
       let bs, rest = Strutils.field_bounds ~f:wsp ~max:n s in
       let l = List.length bs in
       match rest with
-      | None -> Q.assume_fail ()
+      | None -> true
       | _ -> l = n
     )
 
@@ -346,7 +346,7 @@ let t_fld_max_rear_aligned =
       let _, rest = Strutils.field_bounds ~f:wsp ~max:n s in
       let l = String.length s in
       match rest with
-      | None -> Q.assume_fail ()
+      | None -> true
       | Some (_, k) -> k = l
     )
 
@@ -355,7 +355,7 @@ let t_fld_max_rest_rightmost =
     ( fun (n, s) ->
       let bs, rest = Strutils.field_bounds ~f:wsp ~max:n s in
       match rest with
-      | None -> Q.assume_fail ()
+      | None -> true
       | Some (k, _) -> List.for_all (fun (_, j) -> j <= k) bs
     )
 
