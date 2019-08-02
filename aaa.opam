@@ -1,0 +1,21 @@
+opam-version: "2.0"
+synopsis: "Tiny batteries"
+maintainer: "Ian Zimmerman <itz@no-use.mooo.com>"
+authors: "Ian Zimmerman <itz@no-use.mooo.com>"
+license: "Simple BSD like license, see the file LICENSE"
+bug-reports: "itz@no-use.mooo.com"
+depends: [
+  "ocaml" {>= "4.07"}
+  "ocamlfind"
+  "qcheck-core" {>= "0.9"}
+]
+build: [
+  [make "byte" "native"]
+  [make "test"]
+]
+install: "./install.sh"
+url {
+  src: "git+file:///home/itz/git/aaa#master"
+}
+name: "aaa"
+version: "0.0.6~dev"
