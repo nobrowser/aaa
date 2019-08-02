@@ -183,6 +183,7 @@ let t_tok_all_nomissed =
 let t_tok_all_nonempty =
     tok_all_nwsp_test ~name:"tok_all_nonempty"
     ( fun s ->
+      String.length s = 0 ||
       let bs, _ = Strutils.token_bounds ~f:wsp s in
       match bs with [] -> false | _ -> true
     )
@@ -271,11 +272,10 @@ let t_fld_all_nomissed =
     )
 
 let t_fld_all_notokens =
-    tok_all_test ~name:"fld_all_notokens"
+    tok_all_wsp_test ~name:"fld_all_notokens"
     ( fun s ->
       let l = String.length s in
       let bs, _ = Strutils.field_bounds ~f:wsp s in
-      Q.assume (string_forall wsp s) ;
       List.(for_all (fun i -> let (j, k) = nth bs i in j = i && k = i) (upto l))
     )
 
