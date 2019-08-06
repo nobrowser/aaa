@@ -409,8 +409,8 @@ let t_alist_dupe_errs =
       | _ -> false
     )
 
-let alist_nodupe_arb = G.((list_size (1 -- 100) small_string) >|=
-                          List.sort_uniq String.compare)
+let alist_nodupe_arb = G.((list_size (1 -- 100) small_string) >>= fun l ->
+                          shuffle_l (List.sort_uniq String.compare l))
                      |> Q.make ~print:alist_print
 
 let alist_nodupe_test ~name = T.make ~name ~long_factor:10 alist_nodupe_arb
