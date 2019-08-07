@@ -4,6 +4,7 @@
 (license "ZPL-2.1")
 (authors "Ian Zimmerman <itz@no-use.mooo.com>")
 (maintainers "Ian Zimmerman <itz@no-use.mooo.com>")
+(version "0.0.8~dev")
 (source
  (uri "git+file:///home/itz/git/aaa#master"))
 

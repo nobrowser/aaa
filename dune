@@ -1,5 +1,6 @@
 (library
  (name Aaa)
+ (public_name aaa.Aaa)
  (synopsis "Tiny batteries")
  (modules (:standard \ RunTests))
  (flags (-principal)))
