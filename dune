@@ -9,4 +9,5 @@
  (deps
   (file Aaa.cma)
   (file Aaa.cmxa)
-  (file aaa.install)))
+  (file aaa.install)
+  (file aaa.opam)))
