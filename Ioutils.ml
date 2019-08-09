@@ -32,7 +32,11 @@ let fold_file_chars ~f:lf ~init fn = with_file fn ~f:(fold_chars ~f:lf ~init)
 
 let iter_file_chars ~f:lf fn = with_file fn ~f:(iter_chars ~f:lf)
 
-let seq_of_in_chan inch ~fmt ~f =
-    let reader = Scanf.(bscanf (Scanning.from_channel inch) fmt) in
-    let rec delay () = Seq.(try Cons (reader f, delay) with End_of_file -> Nil)
+let seq_of_in_chan inch ~fmt ~r =
+    let scanner = Scanf.(bscanf (Scanning.from_channel inch) fmt) in
+    let rec delay () = Seq.(try Cons (scanner r, delay) with End_of_file -> Nil)
     in delay
+
+let with_file_seq ~fn ~m:m ~fmt ~r =
+    with_file fn
+    ~f:(fun inch -> seq_of_in_chan inch ~fmt ~r |> m)

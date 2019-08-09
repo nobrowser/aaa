@@ -20,7 +20,15 @@ val fold_file_chars : f:('a -> char -> 'a) -> init:'a -> string -> 'a
 
 val iter_file_chars : f:(char -> unit) -> string -> unit
 
-val seq_of_in_chan : in_channel ->
+val seq_of_in_chan :
+    in_channel ->
     fmt:(('a, Scanf.Scanning.in_channel, 'b, 'c -> 'd, 'a -> 'e, 'e) format6) ->
-    f:'c ->
+    r:'c ->
     'd Seq.t
+
+val with_file_seq :
+    fn:string ->
+    m:('d Seq.t -> 'f) ->
+    fmt:(('a, Scanf.Scanning.in_channel, 'b, 'c -> 'd, 'a -> 'e, 'e) format6) ->
+    r:'c ->
+    'f
