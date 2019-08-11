@@ -37,6 +37,6 @@ let seq_of_in_chan inch ~fmt ~r =
     let rec delay () = Seq.(try Cons (scanner r, delay) with End_of_file -> Nil)
     in delay
 
-let with_file_seq ~fn ~m:m ~fmt ~r =
+let with_file_seq ~m:m ~fn  ~fmt ~r =
     with_file fn
     ~f:(fun inch -> seq_of_in_chan inch ~fmt ~r |> m)

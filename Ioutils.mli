@@ -27,8 +27,8 @@ val seq_of_in_chan :
     'd Seq.t
 
 val with_file_seq :
-    fn:string ->
     m:('d Seq.t -> 'f) ->
+    fn:string ->
     fmt:(('a, Scanf.Scanning.in_channel, 'b, 'c -> 'd, 'a -> 'e, 'e) format6) ->
     r:'c ->
     'f
