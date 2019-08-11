@@ -1,4 +1,4 @@
-val with_file : string -> f:(in_channel -> 'a) -> 'a
+val with_in_file : string -> f:(in_channel -> 'a) -> 'a
 
 val lines_of_in_chan : in_channel -> string Seq.t
 
@@ -26,9 +26,11 @@ val seq_of_in_chan :
     r:'c ->
     'd Seq.t
 
-val with_file_seq :
+val with_in_file_seq :
     m:('d Seq.t -> 'f) ->
     fn:string ->
     fmt:(('a, Scanf.Scanning.in_channel, 'b, 'c -> 'd, 'a -> 'e, 'e) format6) ->
     r:'c ->
     'f
+
+val with_out_file : string -> f:(out_channel -> 'a) -> 'a
