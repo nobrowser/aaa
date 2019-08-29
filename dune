@@ -4,19 +4,6 @@
  (modules (:standard \ RunTests))
  (flags (-principal)))
 
-(executable
- (name RunTests)
- (modules RunTests)
- (flags (-open Aaa))
- (libraries Aaa qcheck-core qcheck-core.runner))
-
-(alias
- (name runtest)
- (action (system ./RunTests.sh))
- (deps
-  (file RunTests.sh)
-  (file RunTests.bc)))
-
 (alias
  (name default)
  (deps
