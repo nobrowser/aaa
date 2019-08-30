@@ -13,9 +13,11 @@ build: [
   [make "byte" "native"]
   [make "test"]
 ]
-install: "./install.sh"
+install: [
+  ["sh" "-ex" "./install.sh"]
+]
 url {
   src: "git+file:///home/itz/git/aaa#master"
 }
 name: "aaa"
-version: "0.5.3~dev"
+version: "0.5.4~dev"
