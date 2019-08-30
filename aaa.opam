@@ -18,4 +18,4 @@ url {
   src: "git+file:///home/itz/git/aaa#master"
 }
 name: "aaa"
-version: "0.0.7~dev"
+version: "0.5.1~dev"
