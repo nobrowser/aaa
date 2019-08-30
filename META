@@ -1,4 +1,4 @@
-version = "0.0.1~dev"
+version = "0.5.1~dev"
 description = "Tiny batteries"
 archive(byte) = "Aaa.cma"
 archive(native) = "Aaa.cmxa"
