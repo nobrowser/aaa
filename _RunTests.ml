@@ -101,9 +101,9 @@ let strgen_normal =
            [(1, chargen wsp);
             (7, chargen nwsp)]))
 
-let strgen_allwsp = G.string ~gen:(chargen wsp)
+let strgen_allwsp = G.small_string ~gen:(chargen wsp)
 
-let strgen_allnwsp = G.string ~gen:(chargen nwsp)
+let strgen_allnwsp = G.small_string ~gen:(chargen nwsp)
 
 let tok_all_arb = strgen_normal |> Q.make ~print:strpr
 
