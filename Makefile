@@ -18,28 +18,28 @@ byte: Aaa.cma
 native: Aaa.cmxa
 
 Aaa.cma: Aaa.cmo
-		ocamlc -a -o Aaa.cma Aaa.cmo
+		@ ./compile.sh byte -a Aaa.cma Aaa.cmo
 
 Aaa.cmxa: Aaa.cmx
-		ocamlopt -a -o Aaa.cmxa Aaa.cmx
+		@ ./compile.sh native -a Aaa.cmxa Aaa.cmx
 
 Aaa.cmo: $(AAA_BYTEOBJS)
-		ocamlc -pack -o Aaa.cmo $(AAA_BYTEOBJS)
+		@ ./compile.sh byte -pack Aaa.cmo $(AAA_BYTEOBJS)
 
 Aaa.cmx: $(AAA_NATIVEOBJS)
-		ocamlopt -pack -o Aaa.cmx $(AAA_NATIVEOBJS)
+		@ ./compile.sh native -pack Aaa.cmx $(AAA_NATIVEOBJS)
 
 # Common rules
 .SUFFIXES: .ml .mli .cmo .cmi .cmx
 
 .ml.cmo:
-		ocamlc $(OCAMLFLAGS) -c -o $@ $<
+		@ ./compile.sh byte -c $@ $(OCAMLFLAGS) $<
 
 .ml.cmx:
-		ocamlopt $(OCAMLFLAGS) -c -o $@ $<
+		@ ./compile.sh native -c $@ $(OCAMLFLAGS) $<
 
 .mli.cmi:
-		ocamlc $(OCAMLFLAGS) -c -o $@ $<
+		@ ./compile.sh byte -c $@ $(OCAMLFLAGS) $<
 
 # Dependencies
 .depend: Makefile $(AAA_INTERFACES) $(AAA_SUBMODULES)
@@ -49,7 +49,7 @@ include .depend
 
 # Test suite
 _RunTests: $(AAA_BYTEOBJS) _RunTests.ml
-		ocamlfind ocamlc -package qcheck-core -package qcheck-core.runner -w -24 -o _RunTests -linkpkg $(AAA_BYTEOBJS) _RunTests.ml
+		@ ./compile.sh byte -linkpkg _RunTests -w -24 $(AAA_BYTEOBJS) _RunTests.ml
 
 .PHONY: clean test
 
