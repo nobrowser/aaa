@@ -57,4 +57,4 @@ test: _RunTests
 		./_RunTests
 
 clean:
-		rm -f *.cma *.cmxa *.cmo *.o *.cmx *.cmi .depend _RunTests
+		rm -f *.cma *.cmxa *.cmo *.o *.a *.cmx *.cmi .depend _RunTests
