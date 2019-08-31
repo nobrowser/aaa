@@ -51,10 +51,13 @@ include .depend
 _RunTests: $(AAA_BYTEOBJS) _RunTests.ml
 		@ ./compile.sh byte -linkpkg _RunTests -w -24 $(AAA_BYTEOBJS) _RunTests.ml
 
-.PHONY: clean test
+.PHONY: clean test install
 
 test: _RunTests
 		./_RunTests
 
 clean:
 		rm -f *.cma *.cmxa *.cmo *.o *.a *.cmx *.cmi .depend _RunTests
+
+install:
+		ocamlfind install aaa META Aaa.cma Aaa.cmxa Aaa.cmx Aaa.a *.mli *.cmi
