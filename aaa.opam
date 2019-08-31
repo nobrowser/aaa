@@ -2,7 +2,7 @@ opam-version: "2.0"
 synopsis: "Tiny batteries"
 maintainer: "Ian Zimmerman <itz@no-use.mooo.com>"
 authors: "Ian Zimmerman <itz@no-use.mooo.com>"
-license: "Simple BSD like license, see the file LICENSE"
+license: "ZPL-2.1"
 bug-reports: "itz@no-use.mooo.com"
 depends: [
   "ocaml" {>= "4.07"}
