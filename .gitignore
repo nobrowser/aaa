@@ -1,9 +1,4 @@
-*.cmo
-*.cmi
-*.cma
-.depend
-*.a
-*.cmx
-*.cmxa
-*.o
-/_RunTests
+/_build/
+.merlin
+/aaa.install
+dune-project
