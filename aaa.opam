@@ -10,14 +10,12 @@ depends: [
   "qcheck-core" {>= "0.9"}
 ]
 build: [
-  [make "byte" "native"]
-  [make "test"]
-]
-install: [
-  [make "install"]
+  ["dune" "subst"] {pinned}
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
 ]
 url {
   src: "git+file:///home/itz/git/aaa#master"
 }
 name: "aaa"
-version: "0.5.5~dev"
+version: "0.5.6~dev"
