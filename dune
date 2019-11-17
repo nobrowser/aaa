@@ -3,6 +3,7 @@
  (public_name aaa.Aaa)
  (synopsis "Tiny batteries")
  (modules (:standard \ RunTests))
+ (preprocess (pps bisect_ppx -conditional))
  (flags (-principal)))
 
 (executable
