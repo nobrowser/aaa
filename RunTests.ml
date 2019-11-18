@@ -30,6 +30,27 @@ let t_drop_invalid =
       | Invalid_argument _ -> true
     )
 
+let takedrop_arb_neg =
+  let gn = G.small_nat in
+  gn >>= (fun n -> G.(pair (min_int -- -1) (list_repeat n nat))) |>
+  Q.make ~print:takedrop_print
+
+let takedrop_test_neg ~name = T.make ~name ~long_factor:10 takedrop_arb_neg
+
+let t_take_neg =
+    takedrop_test_neg ~name:"take_neg"
+    ( fun (n, s) ->
+      try Listutils.take n s |> ignore ; false with
+      | Invalid_argument _ -> true
+    )
+
+let t_drop_neg =
+    takedrop_test_neg ~name:"drop_neg"
+    ( fun (n, s) ->
+      try Listutils.drop n s |> ignore ; false with
+      | Invalid_argument _ -> true
+    )
+
 let takedrop_arb =
   let gs = G.(small_list nat) in
   gs >>= (fun s -> G.(pair (List.length s |> int_bound) (return s))) |>
@@ -429,6 +450,8 @@ let suite =
   ; t_take_invalid
   ; t_take_sublist
   ; t_drop_invalid
+  ; t_take_neg
+  ; t_drop_neg
   ; t_drop_length
   ; t_drop_sublist
   ; t_take_drop_append
