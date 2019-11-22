@@ -1,0 +1,11 @@
+(lang dune 1.11)
+
+(context default)
+
+(context
+ (default
+  (name coverage)
+  (env
+   (dev
+    (env-vars
+     (BISECT_ENABLE yes))))))
