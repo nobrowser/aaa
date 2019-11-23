@@ -6,23 +6,8 @@
  (preprocess (pps bisect_ppx -conditional))
  (flags (-principal)))
 
-(executable
- (name RunTests)
- (modules RunTests)
+(test
  (flags (-open Aaa))
- (libraries Aaa qcheck-core qcheck-core.runner))
-
-(alias
- (name runtest)
- (action (system ./RunTests.sh))
- (deps
-  (file RunTests.sh)
-  (file RunTests.bc)))
-
-(alias
- (name default)
- (deps
-  (file Aaa.cma)
-  (file Aaa.cmxa)
-  (file aaa.install)
-  (file aaa.opam)))
+ (libraries Aaa qcheck-core qcheck-core.runner)
+ (modules RunTests)
+ (name RunTests))

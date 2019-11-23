@@ -6,16 +6,16 @@ license: "ZPL-2.1"
 bug-reports: "itz@no-use.mooo.com"
 depends: [
   "ocaml" {>= "4.07"}
-  "ocamlfind"
+  "dune" {>= "1.11"}
   "qcheck-core" {>= "0.9"}
 ]
 build: [
   ["dune" "subst"] {pinned}
   ["dune" "build" "-p" name "-j" jobs "@_build/default/install"]
-  ["dune" "runtest" "-p" name "-j" jobs "@_build/default/runtest"] {with-test}
+  ["dune" "build" "@_build/default/runtest"] {with-test}
 ]
 url {
   src: "git+file:///home/itz/git/aaa#master"
 }
 name: "aaa"
-version: "0.5.8~dev"
+version: "0.5.9~dev"
