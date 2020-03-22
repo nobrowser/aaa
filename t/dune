@@ -1,0 +1,5 @@
+(test
+ (flags (-open Aaa))
+ (libraries Aaa qcheck-core qcheck-core.runner)
+ (modules RunTests)
+ (name RunTests))

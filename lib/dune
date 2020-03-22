@@ -1,0 +1,7 @@
+(library
+ (name Aaa)
+ (public_name aaa.Aaa)
+ (synopsis "Tiny batteries")
+ (modules (:standard))
+ (preprocess (pps bisect_ppx --conditional))
+ (flags (-principal)))
