@@ -6,6 +6,9 @@ module P = QCheck.Print
 let ( ==> ) = Q.( ==> )
 let ( >>= ) = G.( >>= )
 
+open Strgen
+open Upto
+
 let hashed_arb = strgen_normal |> Q.make ~print:strpr
 
 let hashed_test ~name = T.make ~name ~long_factor:10 hashed_arb

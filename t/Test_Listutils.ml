@@ -6,6 +6,8 @@ module P = QCheck.Print
 let ( ==> ) = Q.( ==> )
 let ( >>= ) = G.( >>= )
 
+open Upto
+
 let takedrop_print = P.(pair int (list int))
 
 let takedrop_arb_invalid =
@@ -56,8 +58,6 @@ let takedrop_arb =
   Q.make ~print:takedrop_print
 
 let takedrop_test ~name = T.make ~name ~long_factor:10 takedrop_arb
-
-let upto n = List.init n (fun i -> i)
 
 let t_take_length =
     takedrop_test ~name:"take_length"
