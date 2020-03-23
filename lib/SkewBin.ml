@@ -1,6 +1,9 @@
 (** type of skew binary integers: list of nonzero weights in increasing order *)
 type t = int list
 
+(** Abstraction is cool. :-(|) *)
+let weights s = s
+
 (** Get the integer value of a skew binary number *)
 let to_int s = List.fold_left (+) 0 s
 

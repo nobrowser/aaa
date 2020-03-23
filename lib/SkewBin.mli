@@ -3,6 +3,9 @@
 (** Type of skew binary numbers *)
 type t
 
+(** List of the representation weights. *)
+val weights : t -> int list
+
 (** Get the integer value of a skew binary number *)
 val to_int : t -> int
 
