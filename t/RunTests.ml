@@ -1,4 +1,4 @@
-module Q = QCheck
+module R = QCheck_base_runner
 
 let suite =
   List.concat
