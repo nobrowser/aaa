@@ -6,5 +6,6 @@ let suite =
   ; Test_Strutils.testlist
   ; Test_Sm.testlist
   ; Test_HashedString.testlist
-  ] in
-    R.run_tests_main suite
+  ]
+
+let _ = R.run_tests_main suite
